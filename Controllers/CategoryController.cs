@@ -11,20 +11,52 @@ namespace StudentTaskManager.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly int PageSize = 10;
 
         public CategoryController(ApplicationDbContext context)
         {
             _context = context;
         }
 
- 
-        public IActionResult Index()
+
+        public IActionResult Index(int page = 1)
         {
-            var categories = _context.Categories.ToList();
-            return View(categories);
+            
+
+            
+            var allCategories = _context.Categories
+                .OrderBy(c => c.Name) 
+                .AsQueryable();
+
+           
+            int totalItems = allCategories.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / PageSize);
+
+         
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+           
+            var categoriesOnPage = allCategories
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            
+            var viewModel = new PaginatedTaskListViewModel
+            {
+                
+                Categories = categoriesOnPage,
+                PageNumber = page,
+                TotalPages = totalPages,
+                TotalTasks = totalItems
+            };
+
+            
+            return View(viewModel); 
         }
 
-      
+
         public IActionResult Create()
         {
             return View();

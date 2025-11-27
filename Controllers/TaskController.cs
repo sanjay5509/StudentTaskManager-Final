@@ -13,6 +13,7 @@ namespace StudentTaskManager.Controllers
     public class TaskController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly int PageSize = 10;
 
         public TaskController(ApplicationDbContext context)
         {
@@ -20,38 +21,64 @@ namespace StudentTaskManager.Controllers
         }
 
 
-
-
-
-       
-        public IActionResult Index(string searchString, string statusFilter) 
+      
+        public IActionResult Index(string searchString, string statusFilter, int page = 1)
         {
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           
 
-          
-            var tasks = _context.Tasks
+           
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tasksQuery = _context.Tasks
                 .Include(t => t.Category)
-                .Where(t => t.UserId == userId)
-                .AsQueryable(); 
+                .Where(t => t.UserId == userId) 
+                .AsQueryable();
 
             
             if (!string.IsNullOrEmpty(searchString))
             {
-                tasks = tasks.Where(s => s.Title.Contains(searchString)
-                                       || s.Category.Name.Contains(searchString));
+                
+                tasksQuery = tasksQuery.Where(s => s.Title.Contains(searchString)
+                                       || (s.Category != null && s.Category.Name.Contains(searchString)));
             }
 
-        
+          
             if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
             {
-                
-                tasks = tasks.Where(t => t.Status == statusFilter);
+                tasksQuery = tasksQuery.Where(t => t.Status == statusFilter);
             }
 
-            
-            ViewBag.CurrentStatusFilter = statusFilter; 
-            return View(tasks.ToList());
+          
+
+          
+            int totalItems = tasksQuery.Count();
+
+          
+            int totalPages = (int)Math.Ceiling((double)totalItems / PageSize);
+
+           
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+          
+            var tasksOnPage = tasksQuery
+                .OrderByDescending(t => t.DueDate)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+           
+            var viewModel = new PaginatedTaskListViewModel
+            {
+                Tasks = tasksOnPage,
+                PageNumber = page,
+                TotalPages = totalPages,
+                TotalTasks = totalItems 
+            };
+
+           
+            ViewBag.CurrentStatusFilter = statusFilter;
+            ViewBag.CurrentSearchString = searchString;
+            return View(viewModel);
         }
 
 
