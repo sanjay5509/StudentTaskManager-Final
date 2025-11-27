@@ -14,7 +14,17 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 </head>
 <body>
+    <div id="toast-container" class="toast-container"></div>
 
+    <div class="mobile-top-bar">
+        <button id="sidebar-toggle-btn" class="menu-toggle" onclick="toggleSidebar()">
+            ☰
+        </button>
+        <div class="mobile-brand-logo">
+            <i class="fa-solid fa-layer-group"></i> StudyBuddy
+        </div>
+    </div>
+       
     <div class="wrapper">
         <nav class="sidebar">
             <div class="brand-logo">
