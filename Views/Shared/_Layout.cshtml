@@ -1,0 +1,181 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Student Task Manager</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+
+    <div class="wrapper">
+        <nav class="sidebar">
+            <div class="brand-logo">
+                <i class="fa-solid fa-layer-group"></i> StudyBuddy
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="/Home/Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                        <i class="fa-solid fa-house"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/Task/Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Task" ? "active" : "")">
+                        <i class="fa-solid fa-list-check"></i> My Tasks
+                    </a>
+                </li>
+                <li>
+                    <a href="/Category/Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category" ? "active" : "")">
+                        <i class="fa-solid fa-tags"></i> Categories
+                    </a>
+                </li>
+                <li>
+                <li b-l33fypa7rp>
+                    <a href="/Reports/Index">
+                        <i b-l33fypa7rp class="fa-solid fa-chart-line"></i> Reports
+                    </a>
+                </li>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="main-panel">
+
+            <div class="top-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; width: 100%;">
+
+                <div>
+                    <h2 class="page-title">@ViewData["Title"]</h2>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <a href="/Task/Create" class="btn-primary-custom">+ Create Task</a>
+
+                    <div class="user-profile">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/reminderHub")
+            .build();
+
+        connection.start()
+            .then(() => console.log("SignalR Connection established."))
+            .catch(err => console.error("SignalR Connection error: " + err));
+
+        
+        connection.on("ReceiveReminder", function (message) {
+            displayReminderToast(message); 
+        });
+        
+
+
+        
+        function displayReminderToast(message) {
+            const container = document.getElementById('toast-container');
+            const toastId = 'toast-' + Date.now();
+
+            const toastHTML = `
+                    <div id="${toastId}" class="custom-toast">
+                        <i class="fa-regular fa-bell toast-icon"></i>
+                        <div class="toast-content">
+                            <strong>TASK DUE SOON</strong>
+                            <span>${message}</span>
+                        </div>
+                    </div>
+                `;
+
+            container.insertAdjacentHTML('beforeend', toastHTML);
+            const newToast = document.getElementById(toastId);
+
+            setTimeout(() => {
+                newToast.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                newToast.classList.remove('show');
+                setTimeout(() => {
+                    newToast.remove();
+                }, 500);
+            }, 5000);
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <div class="wrapper">
+</body>
+
+        
+        <script>
+            
+            connection.on("ReceiveReminder", function (message) {
+               
+                displayReminderToast(message);
+            });
+
+
+           
+
+            function displayReminderToast(message) {
+                const container = document.getElementById('toast-container');
+                const toastId = 'toast-' + Date.now();
+
+                
+                const toastHTML = `
+                        <div id="${toastId}" class="custom-toast">
+                            <i class="fa-regular fa-bell toast-icon"></i>
+                            <div class="toast-content">
+                                <strong>TASK DUE SOON</strong>
+                                <span>${message}</span>
+                            </div>
+                        </div>
+                    `;
+
+              
+                container.insertAdjacentHTML('beforeend', toastHTML);
+                const newToast = document.getElementById(toastId);
+
+                
+                setTimeout(() => {
+                    newToast.classList.add('show');
+                }, 100);
+
+                
+                setTimeout(() => {
+                    newToast.classList.remove('show');
+                    
+                    setTimeout(() => {
+                        newToast.remove();
+                    }, 500);
+                }, 10000);
+            }
+        </script>
+</html>

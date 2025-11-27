@@ -1,0 +1,35 @@
+﻿@model StudentTaskManager.Models.TaskModel
+
+@{
+    ViewData["Title"] = "Delete Task";
+}
+
+<div class="card-box" style="max-width: 600px; margin: auto; text-align:center;">
+    <h3 class="text-danger">Are you sure you want to delete this task?</h3>
+    <hr />
+
+    <dl class="row" style="text-align:left;">
+        <dt class="col-sm-4">Task Title:</dt>
+        <dd class="col-sm-8">@Html.DisplayFor(model => model.Title)</dd>
+
+        <dt class="col-sm-4">Category:</dt>
+        <dd class="col-sm-8">@(Model.Category != null ? Model.Category.Name : "N/A")</dd>
+
+        <dt class="col-sm-4">Due Date:</dt>
+        <dd class="col-sm-8">@Html.DisplayFor(model => model.DueDate)</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn-primary-custom" style="background-color: red;">Delete</button> |
+
+        <a asp-action="Index" style="color:var(--text-grey);">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

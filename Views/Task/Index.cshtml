@@ -1,0 +1,151 @@
+﻿@model IEnumerable<StudentTaskManager.Models.TaskModel>
+
+@{
+    ViewData["Title"] = "My Tasks";
+}
+
+<div class="header-area">
+    <h2 style="margin:0; font-weight:700;">My Tasks</h2>
+    <a asp-action="Create" class="btn-primary-custom" style="background-color: #7A6EFE;">+ Create New Task</a>
+</div>
+<div class="card-box" style="padding: 15px; margin-bottom: 20px;">
+    
+    
+    <form asp-controller="Task" asp-action="Index" method="get" class="d-flex" style="gap: 15px; align-items: center;">
+        
+        <input type="text" name="searchString" class="form-control" placeholder="Search by Title or Category..." style="border-radius: 10px; padding: 10px; flex-grow: 1;" />
+        
+        <select name="statusFilter" class="form-control" style="border-radius: 10px; padding: 10px; width: 180px;">
+            @{
+                string currentFilter = (string)ViewBag.CurrentStatusFilter ?? "All";
+
+                string pending = "Pending";
+                string inProgress = "In Progress";
+                string completed = "Completed";
+            }
+
+            @if (currentFilter == "All")
+            {
+                <option value="All" selected>Show All Tasks</option>
+            }
+            else
+            {
+                <option value="All">Show All Tasks</option>
+            }
+
+            @if (currentFilter == pending)
+            {
+                <option value="@pending" selected>Pending Only</option>
+            }
+            else
+            {
+                <option value="@pending">Pending Only</option>
+            }
+
+            @if (currentFilter == inProgress)
+            {
+                <option value="@inProgress" selected>In Progress Only</option>
+            }
+            else
+            {
+                <option value="@inProgress">In Progress Only</option>
+            }
+
+            @if (currentFilter == completed)
+            {
+                <option value="@completed" selected>Completed Only</option>
+            }
+            else
+            {
+                <option value="@completed">Completed Only</option>
+            }
+
+        </select>
+        
+        <button type="submit" class="btn-primary-custom" style="padding: 10px 15px; width: 120px;">
+            <i class="fa-solid fa-filter"></i> Apply
+        </button>
+        
+        <a asp-action="Index" class="btn-primary-custom" style="background-color: #a3aed0; padding: 10px 15px;">
+            Clear
+        </a>
+    </form>
+</div>
+
+<div class="card-box" style="padding: 0;">
+    <table class="custom-table" style="width:100%;">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Title</th>
+                <th style="width: 15%;">Category</th>
+                <th style="width: 15%;">Due Date</th>
+                <th style="width: 15%;">Status</th>
+                <th style="width: 10%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                string badgeBgColor = (item.Status == "Completed") ? "#E6FDF0" :
+                (item.Status == "In Progress" ? "#EEF3FF" : "#FFF8E6");
+
+                string badgeTextColor = (item.Status == "Completed") ? "#00D084" :
+                (item.Status == "In Progress" ? "#2D62FF" : "#FF9800");
+
+                
+
+                
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" style="font-size: 16px; font-weight: bold; color: var(--text-dark); text-decoration: none;">
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </a>
+                    </td>
+
+                    <td>
+                        <span style="color: #a3aed0; font-size: 14px;">
+                            @(item.Category != null ? item.Category.Name : "N/A")
+                        </span>
+                    </td>
+
+                    <td>
+                        <span style="font-size: 14px;">@item.DueDate.ToString("dd MMM yyyy")</span>
+                    </td>
+
+                    <td>
+                        <span style="
+                background-color: @badgeBgColor; /* Background color */
+                color: @badgeTextColor;        /* Text color */
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;">
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </span>
+                    </td>
+
+                    <td style="display: flex; gap: 8px; justify-content: center;">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="action-icon icon-edit" title="Edit Task">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>
+
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="action-icon icon-delete" title="Delete Task">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <p style="text-align: center; padding: 20px; color: #a3aed0;">No tasks found. Click "Create New Task" to add one.</p>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

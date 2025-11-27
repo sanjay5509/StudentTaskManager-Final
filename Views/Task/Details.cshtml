@@ -1,0 +1,74 @@
+﻿@model StudentTaskManager.Models.TaskDetailViewModel
+
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<div class="header-area">
+    <h2 style="margin:0; font-weight:700;">Task: @Model.Task.Title</h2>
+    <a asp-action="Index" class="btn-primary-custom" style="background-color: #a3aed0;">
+        <i class="fa-solid fa-list-check"></i> Back to List
+    </a>
+</div>
+
+<div class="card-box" style="margin-bottom: 30px;">
+    <h4>Overview</h4>
+    <p style="color: var(--text-grey);">@Model.Task.Description</p>
+    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+        <p><strong>Due Date:</strong> @Model.Task.DueDate.ToString("dd MMM yyyy")</p>
+        <p><strong>Status:</strong> <span class="status-badge @(Model.Task.Status == "Completed" ? "status-completed" : "status-progress")">@Model.Task.Status</span></p>
+    </div>
+</div>
+
+<div class="card-box">
+    <h3>Subtasks (@Model.Subtasks.Count)</h3>
+    <form asp-controller="Task" asp-action="Details" method="post" class="d-flex" style="gap: 10px; margin-bottom: 20px;">
+
+        <input type="hidden" asp-for="NewSubtask.TaskId" value="@Model.Task.Id" />
+
+        <input asp-for="NewSubtask.Title" class="form-control" placeholder="New subtask description..." required style="border-radius: 10px;" />
+
+        <button type="submit" class="btn-primary-custom" style="padding: 8px 15px; width: 150px;">
+            Add Step
+        </button>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <hr style="color: var(--text-grey);" />
+
+    <ul style="list-style: none; padding: 0;">
+        @foreach (var subtask in Model.Subtasks)
+        {
+            <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+
+                <div style="display: flex; align-items: center;">
+                    <form asp-action="ToggleSubtask" method="post" style="margin-right: 15px;">
+                        <input type="hidden" name="id" value="@subtask.Id" />
+                        <button type="submit" style="background: none; border: none; cursor: pointer; color: @(subtask.IsCompleted ? "#00D084" : "#a3aed0"); font-size: 20px;">
+                            <i class="fa-regular @(subtask.IsCompleted ? "fa-circle-check" : "fa-circle")"></i>
+                        </button>
+                    </form>
+
+                    <span style="@(subtask.IsCompleted ? "text-decoration: line-through; color: #a3aed0;" : "")">
+                        @subtask.Title
+                    </span>
+                </div>
+
+                <span class="status-badge @(subtask.IsCompleted ? "status-completed" : "status-pending")">
+                    @(subtask.IsCompleted ? "Done" : "Pending")
+                </span>
+            </li>
+        }
+    </ul>
+
+    @if (!Model.Subtasks.Any())
+    {
+        <p style="text-align: center; color: var(--text-grey); margin-top: 20px;">No steps added yet.</p>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

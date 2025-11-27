@@ -1,0 +1,124 @@
+﻿@model StudentTaskManager.Models.ReportViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Productivity Reports";
+
+    
+    string kpiColor = Model.CompletionRate >= 70 ? "#00D084" : (Model.CompletionRate >= 50 ? "#FFC107" : "#ef4444");
+    string kpiIcon = Model.CompletionRate >= 70 ? "fa-circle-check" : "fa-clock";
+}
+
+<div class="header-area">
+    <h2 style="margin:0; font-weight:700;">Detailed Reports</h2>
+</div>
+
+<div class="row" style="margin-bottom: 25px;">
+
+    <div class="col-md-4">
+        <div class="card-box" style="text-align: center;">
+            <div style="font-size: 14px; color: var(--text-grey); margin-bottom: 10px;">Task Completion Rate</div>
+            <i class="fa-solid @kpiIcon" style="font-size: 24px; color: @kpiColor;"></i>
+            <h1 style="font-size: 36px; font-weight: 700; color: @kpiColor; margin: 10px 0;">
+                @Model.CompletionRate%
+            </h1>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box" style="text-align: center;">
+            <div style="font-size: 14px; color: var(--text-grey); margin-bottom: 10px;">Currently Overdue Tasks</div>
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; color: #ef4444;"></i>
+            <h1 style="font-size: 36px; font-weight: 700; color: #ef4444; margin: 10px 0;">
+                @Model.OverdueCount
+            </h1>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box" style="text-align: center;">
+            <div style="font-size: 14px; color: var(--text-grey); margin-bottom: 10px;">Total On-Time Completed</div>
+            <i class="fa-solid fa-calendar-check" style="font-size: 24px; color: #7a6efe;"></i>
+            <h1 style="font-size: 36px; font-weight: 700; color: #7a6efe; margin: 10px 0;">
+                @Model.OnTimeCount
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card-box">
+            <h4>Monthly Task Completion Trend</h4>
+            <div style="height: 350px;">
+                <canvas id="monthlyLineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card-box">
+            <h4>Task Count by Category</h4>
+            <div style="height: 350px; display:flex; justify-content:center; align-items:center;">
+                <canvas id="categoryDonutChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            
+
+            const ctxLine = document.getElementById('monthlyLineChart');
+            if (ctxLine) {
+                new Chart(ctxLine, {
+                    type: 'line',
+                    data: {
+                        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyLabels)),
+                        datasets: [{
+                            label: 'Completed Tasks',
+                            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCompletedCounts)),
+                            backgroundColor: 'rgba(122, 110, 254, 0.2)',
+                            borderColor: '#7a6efe',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            const ctxDonut = document.getElementById('categoryDonutChart');
+            if (ctxDonut) {
+                new Chart(ctxDonut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryNames)),
+                        datasets: [{
+                            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryCounts)),
+                            backgroundColor: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryColors)),
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,12 @@
+﻿# Visual Studio files that should not be committed
+.vs/
+*.suo
+*.user
+*.bak
+*.log
+[Dd]ebug/
+[Rr]elease/
+
+# Binaries and Build Artifacts
+bin/
+obj/

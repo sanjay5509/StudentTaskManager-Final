@@ -1,0 +1,65 @@
+﻿@model StudentTaskManager.Models.TaskModel
+
+@{
+    ViewData["Title"] = "Create Task";
+}
+
+<div class="card-box" style="max-width: 700px; margin: auto;">
+    <h3 style="margin-bottom: 20px;">Create New Task</h3>
+
+    <form asp-action="Create" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 20px; padding:10px; background-color: #ffe0e0; border: 1px solid #ff9999; border-radius: 10px; font-weight: bold;">
+            Please correct the errors below.
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="color:var(--text-grey);">Task Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter task name..." style="padding:10px; border-radius:10px;" required />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="color:var(--text-grey);">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="3" style="padding:10px; border-radius:10px;"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 form-group" style="margin-bottom: 15px;">
+                <label style="color:var(--text-grey);">Due Date</label>
+                <input asp-for="DueDate" type="datetime-local" class="form-control" style="padding:10px; border-radius:10px;" required />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group" style="margin-bottom: 15px;">
+                <label style="color:var(--text-grey);">Category</label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId" style="padding:10px; border-radius:10px;">
+                    <option value="0">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="color:var(--text-grey);">Status</label>
+            <select asp-for="Status" class="form-control" style="padding:10px; border-radius:10px;">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-primary-custom" style="width:100%;">Add Task</button>
+
+        <div style="margin-top:10px; text-align:center;">
+            <a href="/Task/Index" style="color:var(--text-grey);">Back to List</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

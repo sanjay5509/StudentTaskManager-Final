@@ -1,0 +1,33 @@
+﻿@model StudentTaskManager.Models.Category
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<div class="card-box" style="max-width: 600px; margin: auto;">
+    <h3 style="margin-bottom: 20px;">Add New Category</h3>
+
+    <form asp-action="Create" method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 20px; padding:10px; background-color: #ffe0e0; border: 1px solid #ff9999; border-radius: 10px; font-weight: bold;">
+            Please correct the errors below.
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="color:var(--text-grey); margin-bottom:5px;">Category Name</label>
+            <input asp-for="Name" class="form-control" placeholder="E.g., Homework, Project" style="padding:10px; border-radius:10px;" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn-primary-custom" style="width:100%;">Save Category</button>
+        <div style="margin-top:10px; text-align:center;">
+            <a href="/Category/Index" style="color:var(--text-grey);">Back to List</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

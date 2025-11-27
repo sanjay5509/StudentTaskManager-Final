@@ -1,0 +1,147 @@
+﻿@model StudentTaskManager.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard"; 
+}
+
+<div style="margin-top: -30px; margin-bottom: 30px;">
+    <p style="color: #a3aed0; margin:0;">Hi Student,</p>
+    <h2 style="margin:0; font-weight:700;">Welcome Back!</h2>
+</div>
+
+<div class="stats-grid">
+    <div class="card-box" style="display:flex; align-items:center;">
+        <div class="stat-icon purple-bg"><i class="fa-solid fa-layer-group"></i></div>
+        <div>
+            <p style="margin:0; color:#a3aed0;">Total Tasks</p>
+            <h3 style="margin:0;">@Model.TotalTasks</h3>
+        </div>
+    </div>
+    <div class="card-box" style="display:flex; align-items:center;">
+        <div class="stat-icon blue-bg"><i class="fa-solid fa-spinner"></i></div>
+        <div>
+            <p style="margin:0; color:#a3aed0;">In Progress</p>
+            <h3 style="margin:0;">@Model.InProgressTasks</h3>
+        </div>
+    </div>
+    <div class="card-box" style="display:flex; align-items:center;">
+        <div class="stat-icon green-bg"><i class="fa-solid fa-check-circle"></i></div>
+        <div>
+            <p style="margin:0; color:#a3aed0;">Completed</p>
+            <h3 style="margin:0;">@Model.CompletedTasks</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card-box">
+            <h4>Weekly Activity</h4>
+            <div style="height: 300px;">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box">
+            <h4>Task Status</h4>
+            <div style="height: 250px; display:flex; justify-content:center;">
+                <canvas id="donutChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-box" style="margin-top: 20px;">
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+        <h4>Recent Tasks</h4>
+        <a href="/Task/Index" style="color:var(--primary-color); text-decoration:none;">View All</a>
+    </div>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.RecentTasks != null && Model.RecentTasks.Any())
+            {
+                @foreach (var task in Model.RecentTasks)
+                {
+                    <tr>
+                        <td><strong>@task.Title</strong></td>
+                        <td>@(task.Category != null ? task.Category.Name : "No Category")</td>
+                        <td>
+                            @if (task.Status == "Completed")
+                            {
+                                <span style="color:green; font-weight:bold;">Done</span>
+                            }
+                            else if (task.Status == "Pending")
+                            {
+                                <span style="color:orange; font-weight:bold;">Pending</span>
+                            }
+                            else
+                            {
+                                <span style="color:#2d62ff; font-weight:bold;">@task.Status</span>
+                            }
+                        </td>
+                        <td>@task.DueDate.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align:center;">No tasks added yet.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+       
+        const statusData = @Html.Raw(ViewBag.StatusDataJson);
+        const donutLabels = ['Completed', 'In Progress', 'Pending'];
+        const barLabels = @Html.Raw(ViewBag.WeeklyLabelsJson);
+        const barCounts = @Html.Raw(ViewBag.WeeklyCountsJson);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            
+
+            
+            const barElement = document.getElementById('barChart');
+            if (barElement) {
+                const ctxBar = barElement.getContext('2d');
+                new Chart(ctxBar, {
+                    type: 'bar',
+                    data: { labels: barLabels, datasets: [{ data: barCounts, backgroundColor: '#7a6efe', borderRadius: 5, barThickness: 15 }] },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, grid: { display: false }, ticks: { color: '#ffffff', font: { size: 12 } } },
+                            x: { grid: { display: false }, ticks: { color: '#ffffff', font: { size: 12 } } }
+                        }, plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            
+            const donutElement = document.getElementById('donutChart');
+            if (donutElement) {
+                const ctxDonut = donutElement.getContext('2d');
+                new Chart(ctxDonut, {
+                    type: 'doughnut',
+                    data: { labels: donutLabels, datasets: [{ data: statusData, backgroundColor: ['#4318FF', '#007FFF', '#FFC700'], borderWidth: 0 }] },
+                    options: { cutout: '70%', plugins: { legend: { display: false } } }
+                });
+            }
+        });
+    </script>
+}
