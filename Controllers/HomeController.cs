@@ -30,7 +30,7 @@ namespace StudentTaskManager.Controllers
             var model = new DashboardViewModel
             {
                 TotalTasks = totalTasks,
-                CompletedTasks = completedCount,
+                CompletedTasks = completedCount,        
                 PendingTasks = pendingCount,
                 InProgressTasks = inProgressCount,
              

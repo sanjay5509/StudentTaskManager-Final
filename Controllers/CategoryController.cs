@@ -4,10 +4,12 @@ using StudentTaskManager.Data;
 using StudentTaskManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Security;
 
 namespace StudentTaskManager.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
+
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

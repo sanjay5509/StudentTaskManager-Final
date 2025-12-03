@@ -1,49 +1,45 @@
 ﻿@page
-@model LoginModel
+@model StudentTaskManager.Areas.Identity.Pages.Account.RegisterModel
 
 @{
-    ViewData["Title"] = "Log in";
-    Layout = "/Views/Shared/_Layout.cshtml"; 
+    ViewData["Title"] = "Register";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<div class="identity-form-card">
+<div class="identity-page-wrapper">
     <div class="identity-form-card">
-        <h1>Create Account      </h1>
+        <h1>Create Account</h1>
         <div class="row">
             <div class="col-md-12">
                 <section>
-                    <form id="account" method="post">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <label asp-for="Input.Email">Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.Password" class="form-label">Password</label>
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password">Password</label>
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
 
-                        <div class="checkbox mb-3">
-                            <label asp-for="Input.RememberMe" class="form-label">
-                                <input class="form-check-input" asp-for="Input.RememberMe" />
-                                @Html.DisplayNameFor(m => m.Input.RememberMe)
-                            </label>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
 
-                        <div>
-                            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                        </div>
+                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
 
                         <div class="mt-3 text-center">
                             <p>
-                                <a id="forgot-password" asp-page="./ForgotPassword" style="color: var(--primary-color);">Forgot your password?</a>
-                            </p>
-                            <p>
-                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="color: var(--primary-color);">Register a new user</a>
+                                Already have an account?
+                                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" style="color: var(--primary-color);">Log in</a>
                             </p>
                         </div>
                     </form>

@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-
+@using StudentTaskManager.Models
+@inject SignInManager<StudentTaskManager.Models.ApplicationUser> SignInManager 
+@inject UserManager<StudentTaskManager.Models.ApplicationUser> UserManager
 <ul class="navbar-nav user-profile">
     @if (SignInManager.IsSignedIn(User))
     {

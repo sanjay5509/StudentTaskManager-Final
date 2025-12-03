@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace StudentTaskManager.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin, Student")]
     public class TaskController : Controller
     {
         private readonly ApplicationDbContext _context;
